@@ -1,11 +1,12 @@
 package ducnm.com.footballyardmanage;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends Activity {
     private Boolean exit = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
