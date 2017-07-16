@@ -20,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RegisterActivity extends Activity {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    EditText txtReEmail, txtRePassword, txtRePasswordConfirm;
+    EditText txtReEmail, txtRePassword, txtRePasswordConfirm, txtName, txtNumberPhone;
     RadioButton radioCustomer, radioManager;
     Button btnRunRegister;
 
@@ -34,6 +34,8 @@ public class RegisterActivity extends Activity {
         txtReEmail = (EditText) findViewById(R.id.txtReEmail);
         txtRePassword = (EditText) findViewById(R.id.txtRePassword);
         txtRePasswordConfirm = (EditText) findViewById(R.id.txtRePasswordConfirm);
+        txtName = (EditText) findViewById(R.id.name);
+        txtNumberPhone = (EditText) findViewById(R.id.numberPhone);
 
         radioCustomer = (RadioButton) findViewById(R.id.radioCustomer);
         radioManager = (RadioButton) findViewById(R.id.radioManager);
@@ -47,6 +49,8 @@ public class RegisterActivity extends Activity {
                 String email = txtReEmail.getText().toString();
                 String password = txtRePassword.getText().toString();
                 String passwordConfirm = txtRePasswordConfirm.getText().toString();
+                String name = txtName.getText().toString();
+                String numberPhone = txtNumberPhone.getText().toString();
                 String role = "Customer";
                 if(radioManager.isChecked()) role = "Manager";
 
@@ -54,8 +58,13 @@ public class RegisterActivity extends Activity {
                     Toast.makeText(RegisterActivity.this, "Please input correct email", Toast.LENGTH_SHORT).show();
                 }else if(!password.equals(passwordConfirm)){
                     Toast.makeText(RegisterActivity.this, "Confirm password is not match", Toast.LENGTH_SHORT).show();
-                }else{
-                    createAccount(email, password, role);
+                }else if(name.equals("")){
+                    Toast.makeText(RegisterActivity.this, "Please input name", Toast.LENGTH_SHORT).show();
+                }else if(numberPhone.equals("")){
+                    Toast.makeText(RegisterActivity.this, "Please input number phone", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    createAccount(email, password, role, name, numberPhone);
                 }
             }
         });
@@ -69,7 +78,7 @@ public class RegisterActivity extends Activity {
         return m.matches();
     }
 
-    public void createAccount(String email, String password, final String role){
+    public void createAccount(String email, String password, final String role, final String name, final String numberPhone){
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -77,6 +86,8 @@ public class RegisterActivity extends Activity {
                         if (task.isSuccessful()) {
                             String userID = task.getResult().getUser().getUid();
                             mDatabase.child("users").child(userID).child("role").setValue(role);
+                            mDatabase.child("users").child(userID).child("name").setValue(name);
+                            mDatabase.child("users").child(userID).child("phoneNumber").setValue(numberPhone);
                             Toast.makeText(RegisterActivity.this, "Register success!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);

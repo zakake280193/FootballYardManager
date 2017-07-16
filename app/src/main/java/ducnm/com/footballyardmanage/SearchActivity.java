@@ -2,18 +2,18 @@ package ducnm.com.footballyardmanage;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 public class SearchActivity extends Activity {
     private Boolean exit = false;
+    SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        System.out.println("Check");
+        searchView = (SearchView) findViewById(R.id.searchBar);
     }
 
 
