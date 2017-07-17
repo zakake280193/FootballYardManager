@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -19,11 +20,19 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,11 +40,14 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class CreateYard extends Activity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
+    DatabaseReference mDatabase;
+
     Button bt;
     FloatingActionButton fb;
     AlphaAnimation inAnimation;
@@ -44,10 +56,13 @@ public class CreateYard extends Activity {
     ArrayList<String> listURL;
     ArrayAdapter adapter;
     String imageName;
+    Yard yard;
+
 
     FrameLayout progressBarHolder;
     int REQUEST_CODE_IMAGE = 1;
-    EditText txtAddressYard, txtYardOwner, txtPhoneNumber, txtDescription, txtNumberYard;
+    EditText txtAddressYard, txtYardOwner, txtPhoneNumber, txtDescription;
+    Spinner spinnerArea;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -62,6 +77,11 @@ public class CreateYard extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_yard);
+
+        yard = new Yard();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
         bt = (Button) findViewById(R.id.button2);
         fb = (FloatingActionButton) findViewById(R.id.fab);
         lv = (ListView) findViewById(R.id.listView);
@@ -69,7 +89,7 @@ public class CreateYard extends Activity {
         txtYardOwner = (EditText) findViewById(R.id.txtYardOwner);
         txtPhoneNumber = (EditText) findViewById(R.id.txtPhoneNumber);
         txtDescription = (EditText) findViewById(R.id.txtDescription);
-        txtNumberYard = (EditText) findViewById(R.id.txtNumberYard);
+        spinnerArea = (Spinner) findViewById(R.id.spinnerArea);
         listURL = new ArrayList<String>();
         adapter = new ArrayAdapter(CreateYard.this, android.R.layout.simple_list_item_1,listURL);
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
@@ -89,7 +109,7 @@ public class CreateYard extends Activity {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                createYard();
             }
         });
     }
@@ -165,6 +185,7 @@ public class CreateYard extends Activity {
                 Toast.makeText(CreateYard.this, taskSnapshot.getMetadata().getName() , Toast.LENGTH_SHORT).show();
                 listURL.add(imageName);
                 lv.setAdapter(adapter);
+                yard.setListImage(imageName.replace(".jpg",""), downloadUrl.toString());
             }
         }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -181,11 +202,33 @@ public class CreateYard extends Activity {
         return image;
     }
     public void createYard(){
-        String address = txtAddressYard.getText().toString();
-        String name = txtYardOwner.getText().toString();
-        String numberPhone = txtPhoneNumber.getText().toString();
-        String description = txtDescription.getText().toString();
-        String numberYard = txtNumberYard.getText().toString();
+        yard.setAddress(txtAddressYard.getText().toString());
+        yard.setYardOwner(txtYardOwner.getText().toString());
+        yard.setPhoneNumber(txtPhoneNumber.getText().toString());
+        yard.setDescription(txtDescription.getText().toString());
+        yard.setArea(spinnerArea.getSelectedItem().toString());
+        String mGroupId = mDatabase.push().getKey();
+
+        mDatabase.child("users").child(MainActivity.user.getUid()).child("Yards").setValue(mGroupId);
+        mDatabase.child("Yard").child(mGroupId).setValue(yard);
+        Query query = mDatabase.child("").orderByChild("").endAt("");
+        mDatabase.child("").orderByChild("").endAt("").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+//                ArrayList<Yard> a = dataSnapshot.getChildren();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+       Intent intent = new Intent(CreateYard.this, SearchActivity.class);
+        startActivity(intent);
 
     }
 }

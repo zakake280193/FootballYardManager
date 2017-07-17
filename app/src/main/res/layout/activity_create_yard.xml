@@ -82,20 +82,9 @@
         android:layout_height="100dp"
         android:layout_marginLeft="30dp"
         android:id="@+id/listView"
+        android:layout_marginBottom="10dp"
         android:layout_above="@+id/button2"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="12dp" />
-
-    <EditText
-        android:hint="Number of yard"
-        android:id="@+id/txtNumberYard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_above="@+id/listView"
-        android:layout_below="@+id/txtDescription"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="15dp"/>
+        android:layout_alignParentEnd="true" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -105,6 +94,16 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="15dp"
         android:src="@android:drawable/ic_input_add" />
+
+    <Spinner
+        android:id="@+id/spinnerArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDescription"
+        android:layout_toEndOf="@+id/progressBarHolder"
+        android:entries="@array/country_arrays"
+        android:prompt="@string/country_prompt"
+        android:layout_marginTop="15dp" />
 
 
 </RelativeLayout>
