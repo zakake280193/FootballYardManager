@@ -1,6 +1,8 @@
 package ducnm.com.footballyardmanage;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
@@ -59,6 +61,12 @@ public class SearchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        startService(new Intent(this, NotificationServices.class));
+        if(isMyServiceRunning(NotificationServices.class)){
+            Toast.makeText(this, "Service is running", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Service isn't running", Toast.LENGTH_SHORT).show();
+        }
         mDatabase = FirebaseDatabase.getInstance().getReference();
         searchView = (SearchView) findViewById(R.id.searchBar);
         spinnerSearch = (Spinner) findViewById(R.id.spinner);
@@ -114,6 +122,16 @@ public class SearchActivity extends Activity {
         });
         registerForContextMenu(listSearch);
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

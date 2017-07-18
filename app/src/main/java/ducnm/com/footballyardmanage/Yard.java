@@ -14,7 +14,29 @@ public class Yard implements Serializable{
     private String phoneNumber;
     private String description;
     private String area;
+    private String idOwner;
+    private String id;
     private HashMap<String, String> listImage;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getIdOwner() {
+        return idOwner;
+    }
+
+    public void setIdOwner(String idOwner) {
+        this.idOwner = idOwner;
+    }
+
+    public void setListImage(HashMap<String, String> listImage) {
+        this.listImage = listImage;
+    }
 
     public Yard() {
         listImage = new HashMap<>();

@@ -207,27 +207,18 @@ public class CreateYard extends Activity {
         yard.setPhoneNumber(txtPhoneNumber.getText().toString());
         yard.setDescription(txtDescription.getText().toString());
         yard.setArea(spinnerArea.getSelectedItem().toString());
+        yard.setIdOwner(MainActivity.user.getUid());
         String mGroupId = mDatabase.push().getKey();
-
-        mDatabase.child("users").child(MainActivity.user.getUid()).child("Yards").setValue(mGroupId);
+        yard.setId(mGroupId);
         mDatabase.child("Yard").child(mGroupId).setValue(yard);
-        Query query = mDatabase.child("").orderByChild("").endAt("");
-        mDatabase.child("").orderByChild("").endAt("").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-//                ArrayList<Yard> a = dataSnapshot.getChildren();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        Intent intent = new Intent(CreateYard.this, SearchActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public void onBackPressed() {
-       Intent intent = new Intent(CreateYard.this, SearchActivity.class);
+        Intent intent = new Intent(CreateYard.this, SearchActivity.class);
         startActivity(intent);
 
     }
